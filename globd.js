@@ -4,8 +4,30 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var glob = require('glob');
 var log = require('npmlog');
+<<<<<<< HEAD
 
 //log.level = 'verbose'; //! accept cli arg
+=======
+var helpers = require('./lib/helpers.js');
+var globd = require('./plugins/globd/index.js');
+var argParser = require('minimist');
+var util = require('util');
+
+var opts = {
+    default: {
+        'log-level': 'info', // silly, verbose, *info, http, warn, error
+        'port': '8080'
+    }
+};
+var argv = argParser(process.argv.slice(2), opts);
+log.level = argv['log-level'];
+<<<<<<< HEAD
+>>>>>>> e17ab7f... accept log-level command line arg;
+=======
+var port = argv['port'];
+
+log.verbose(JSON.stringify(argv, null, 4));
+>>>>>>> de694d3... accept port number arg;
 
 function asyncTryCatch(tryFunction, catchFunction, keepAliveOnHandled)
 {
@@ -60,6 +82,7 @@ function getGlobResult(pattern)
     };
 }
 
+<<<<<<< HEAD
 io.on('connection', function(socket)
 {// client connected (via localhost:8080)
     function getLocalTime()
@@ -71,6 +94,13 @@ io.on('connection', function(socket)
     socket.on('disconnect', function()
     {// client disconnected (browser session ended)
         log.verbose("", getLocalTime() + ': DISconnected');
+=======
+function listenOnPort()
+{
+    http.listen(port, function()
+    {
+        log.info(util.format('listening on \'localhost:%j\'', port));
+>>>>>>> de694d3... accept port number arg;
     });
 
     socket.on('glob', function(globPatterns)
@@ -105,6 +135,7 @@ io.on('connection', function(socket)
 });
 
 asyncTryCatch(
+<<<<<<< HEAD
     function()
     {
         http.listen(8080, function()
@@ -112,11 +143,14 @@ asyncTryCatch(
             log.info("listening on localhost:8080");
         });
     },
+=======
+    listenOnPort,
+>>>>>>> de694d3... accept port number arg;
     function(ex)
     {
         if (ex.message.indexOf('listen EADDRINUSE') > -1)
         {// (node v0.10.28) http://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback
-            log.error("port 8080 is already bound. kill the other process first.");
+            log.error(util.format('port %j is already bound. kill the other process first.', port));
             return true;
         }
         else
